@@ -52,7 +52,8 @@ class _TransactionDialogState extends State<TransactionDialog> {
         ),
       ),
       actions: [
-        buildCancelButton(),
+        buildCancelButton(context),
+        buildAddButton(context,isEditing: isEditing)
       ],
     );
   }
@@ -106,4 +107,18 @@ class _TransactionDialogState extends State<TransactionDialog> {
     );
   }
 
+  Widget buildAddButton(BuildContext context, {required bool isEditing}){
+    final text = isEditing ? 'Save':'Add';
+    return TextButton(
+        onPressed: () async{
+          final isValid = formKey.currentState!.validate();
+          if(isValid){
+            final name = nameController.text;
+            final amount = double.tryParse(amountController.text) ?? 0;
+            widget.onClickedDone(name,amount,isExpense);
+            Navigator.of(context).pop();
+          }
+        }, child: Text(text),
+    );
+  }
 }
