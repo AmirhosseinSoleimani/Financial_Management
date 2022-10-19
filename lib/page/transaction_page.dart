@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_project/model/transaction.dart';
 
 class TransactionPage extends StatefulWidget {
   const TransactionPage({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class _TransactionPageState extends State<TransactionPage> {
         title: const Text('Hive Expense Tracker'),
         centerTitle: true,
       ),
+
     );
   }
 }
