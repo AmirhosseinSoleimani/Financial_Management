@@ -3,6 +3,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_project/boxes.dart';
 import 'package:hive_project/model/transaction.dart';
+import 'package:hive_project/widget/transaction_dialog.dart';
+import 'package:intl/intl.dart';
 
 class TransactionPage extends StatefulWidget {
   const TransactionPage({Key? key}) : super(key: key);
@@ -26,6 +28,12 @@ class _TransactionPageState extends State<TransactionPage> {
           return buildContent();
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => showDialog(
+            context: context,
+            builder: (context) => TransactionDialog(onClickedDone: addTransaction)),
+      ),
     );
   }
 
@@ -35,5 +43,19 @@ class _TransactionPageState extends State<TransactionPage> {
         'No expense yet!'
       ),
     );
+  }
+
+  Future addTransaction(
+      String name,
+      double amount,
+      bool isExpense
+      ) async{
+    final transaction = Transaction()
+        ..name = name
+        ..createData = DateTime.now()
+        ..amount = amount
+        ..isExpense = isExpense;
+    final box = Boxes.getTransactions();
+    box.add(transaction);
   }
 }
