@@ -51,7 +51,9 @@ class _TransactionDialogState extends State<TransactionDialog> {
           ],
         ),
       ),
-
+      actions: [
+        buildCancelButton(),
+      ],
     );
   }
   Widget buildName(){
@@ -92,6 +94,15 @@ class _TransactionDialogState extends State<TransactionDialog> {
             groupValue: isExpense,
             onChanged: (value) => setState(() => isExpense = value!))
       ],
+    );
+  }
+
+  Widget buildCancelButton(BuildContext context){
+    return TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: const Text(
+          'Cancel'
+        ),
     );
   }
 
