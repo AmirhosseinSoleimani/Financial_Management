@@ -23,6 +23,8 @@ class _TransactionDialogState extends State<TransactionDialog> {
   final nameController = TextEditingController();
   final amountController = TextEditingController();
 
+  bool isExpense = true;
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.transaction != null;
@@ -41,7 +43,11 @@ class _TransactionDialogState extends State<TransactionDialog> {
             const SizedBox(
               height: 8.0,
             ),
-            buildAmount()
+            buildAmount(),
+            const SizedBox(
+              height: 8.0,
+            ),
+            buildRadioButtons(),
           ],
         ),
       ),
@@ -69,6 +75,23 @@ class _TransactionDialogState extends State<TransactionDialog> {
       validator: (amount) => amount != null && double.tryParse(amount) == null ?
       'Enter a valid number' : null,
       controller: amountController,
+    );
+  }
+
+  Widget buildRadioButtons(){
+    return Column(
+      children: [
+        RadioListTile<bool>(
+            value: true,
+            title: const Text('Expense'),
+            groupValue: isExpense,
+            onChanged: (value) => setState(() => isExpense = value!)),
+        RadioListTile<bool>(
+            value: false,
+            title: const Text('Income'),
+            groupValue: isExpense,
+            onChanged: (value) => setState(() => isExpense = value!))
+      ],
     );
   }
 
