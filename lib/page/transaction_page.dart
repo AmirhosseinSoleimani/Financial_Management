@@ -116,11 +116,43 @@ class _TransactionPageState extends State<TransactionPage> {
           ),
         ),
         children: [
-          BuidButtons(context,transaction)
+          BuildButtons(context,transaction)
         ],
       ),
-    )
+    );
 
+  }
+
+  Widget BuildButtons(BuildContext context,Transaction transaction){
+    return Row(
+      children: [
+        Expanded(
+            child: TextButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                  builder: (context) => TransactionDialog(
+                    transaction: transaction,
+                      onClickedDone: (name,amount,isExpense){
+                      editTransaction(transaction, name, amount, isExpense)
+                      }
+                  )
+                ),
+                ),
+                icon: const Icon(Icons.edit),
+                label: const Text(
+                  'Edit'
+                ),
+            ),
+        ),
+        Expanded(
+            child: TextButton.icon(
+                onPressed: () => deleteTransaction(transaction),
+                icon: const Icon(Icons.delete),
+                label: const Text('Delete'),
+            ),
+        )
+      ],
+    );
   }
 
   Future addTransaction(String name, double amount, bool isExpense) async{
