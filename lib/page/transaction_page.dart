@@ -14,6 +14,13 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
+
+  @override
+  void dispose() {
+    Hive.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +97,7 @@ class _TransactionPageState extends State<TransactionPage> {
   Widget buildTransaction(BuildContext context,Transaction transaction){
     final color = transaction.isExpense ? Colors.red : Colors.green;
     final date = DateFormat.yMMMd().format(transaction.createData);
-    final amount = '\$ + ${  transaction.amount.toStringAsFixed(2)}';
+    final amount = transaction.isExpense ? ' - ${transaction.amount.toStringAsFixed(2)} \$' : '+ ${transaction.amount.toStringAsFixed(2)} \$';
     return Card(
       color: Colors.white,
       child: ExpansionTile(
@@ -116,14 +123,14 @@ class _TransactionPageState extends State<TransactionPage> {
           ),
         ),
         children: [
-          BuildButtons(context,transaction)
+          buildButtons(context,transaction)
         ],
       ),
     );
 
   }
 
-  Widget BuildButtons(BuildContext context,Transaction transaction){
+  Widget buildButtons(BuildContext context,Transaction transaction){
     return Row(
       children: [
         Expanded(
@@ -133,7 +140,7 @@ class _TransactionPageState extends State<TransactionPage> {
                   builder: (context) => TransactionDialog(
                     transaction: transaction,
                       onClickedDone: (name,amount,isExpense){
-                      editTransaction(transaction, name, amount, isExpense)
+                      editTransaction(transaction, name, amount, isExpense);
                       }
                   )
                 ),
@@ -153,6 +160,21 @@ class _TransactionPageState extends State<TransactionPage> {
         )
       ],
     );
+  }
+
+  void editTransaction(Transaction transaction,String name,double amount,bool isExpense){
+    transaction.name = name;
+    transaction.amount = amount;
+    transaction.isExpense = isExpense;
+    final box = Boxes.getTransactions();
+    box.put(transaction.key, transaction);
+    transaction.save();
+  }
+
+  void deleteTransaction(Transaction transaction){
+    final box = Boxes.getTransactions();
+    box.delete(transaction);
+    transaction.delete();
   }
 
   Future addTransaction(String name, double amount, bool isExpense) async{
