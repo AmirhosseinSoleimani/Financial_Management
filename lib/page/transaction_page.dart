@@ -25,7 +25,7 @@ class _TransactionPageState extends State<TransactionPage> {
         valueListenable: Boxes.getTransactions().listenable(),
         builder: (context,box,_){
           final transaction = box.values.toList().cast<Transaction>();
-          return buildContent();
+          return buildContent(transaction);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -37,19 +37,57 @@ class _TransactionPageState extends State<TransactionPage> {
     );
   }
 
-  Widget buildContent(){
-    return const Center(
-      child: Text(
-        'No expense yet!'
-      ),
-    );
+  Widget buildContent(List<Transaction> transaction){
+    if(transaction.isEmpty){
+      return const Center(
+        child: Text(
+            'No expense yet!',
+          style: TextStyle(
+            fontSize: 24
+          ),
+        ),
+      );
+    } else{
+      final netExpense = transaction.fold<double>(
+        0,
+          (previousValue,transaction) => transaction.isExpense ?
+              previousValue - transaction.amount :
+              previousValue + transaction.amount,
+      );
+      final newExpenseString = '\$${netExpense.toStringAsFixed(2)}';
+      final color = netExpense > 0 ? Colors.green : Colors.red;
+      return Column(
+        children: [
+          const SizedBox(
+            height: 24.0,
+          ),
+          Text(
+            'Net Expense: $newExpenseString',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+              color: color
+            ),
+          ),
+          const SizedBox(
+            height: 24.0,
+          ),
+          Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(8.0),
+                  itemCount: transaction.length,
+                  itemBuilder: (BuildContext context,int index){
+                  final transactions = transaction[index];
+                  return buildTransaction(context,transactions);
+                  }),
+          )
+        ],
+      );
+    }
+
   }
 
-  Future addTransaction(
-      String name,
-      double amount,
-      bool isExpense
-      ) async{
+  Future addTransaction(String name, double amount, bool isExpense) async{
     final transaction = Transaction()
         ..name = name
         ..createData = DateTime.now()
