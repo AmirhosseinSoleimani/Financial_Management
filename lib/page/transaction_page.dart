@@ -87,6 +87,42 @@ class _TransactionPageState extends State<TransactionPage> {
 
   }
 
+  Widget buildTransaction(BuildContext context,Transaction transaction){
+    final color = transaction.isExpense ? Colors.red : Colors.green;
+    final date = DateFormat.yMMMd().format(transaction.createData);
+    final amount = '\$ + ${  transaction.amount.toStringAsFixed(2)}';
+    return Card(
+      color: Colors.white,
+      child: ExpansionTile(
+        tilePadding: const EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 8.0,
+        ),
+        title: Text(
+          transaction.name,
+          maxLines: 2,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18.0
+          ),
+        ),
+        subtitle: Text(date),
+        trailing: Text(
+          amount,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0
+          ),
+        ),
+        children: [
+          BuidButtons(context,transaction)
+        ],
+      ),
+    )
+
+  }
+
   Future addTransaction(String name, double amount, bool isExpense) async{
     final transaction = Transaction()
         ..name = name
